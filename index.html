@@ -26,7 +26,7 @@
       }
 
       .app-header {
-        position: absolute; top: 30px; left: 0; right: 0;
+        position: absolute; top: 25px; left: 0; right: 0;
         font-size: 2.2rem; font-weight: 900; color: rgba(45, 52, 54, 0.05); 
         text-align: center; user-select: none; pointer-events: none; z-index: 0;
       }
@@ -38,18 +38,23 @@
         font-weight: 400; direction: rtl;
       }
 
-      .scene { width: 85%; max-width: 360px; height: 470px; perspective: 1500px; z-index: 1; }
+      /* הגדלת מידות הקלף - תופס יותר שטח מסך במובייל */
+      .scene { 
+        width: 92%; /* עלה מ-85% כדי להתרחב לצדדים */
+        max-width: 380px; 
+        height: 530px; /* עלה מ-470px כדי להיות ארוך ונוכח */
+        perspective: 1500px; 
+        z-index: 1; 
+      }
       
       .card-wrap {
         width: 100%; height: 100%; position: relative;
         transform-style: preserve-3d;
-        /* שילוב סיבוב עם שינוי גודל עומק (Depth Scaling) */
         transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      /* בזמן ההיפוך הכרטיס גם מתרחק מעט (scale 0.93) כדי לייצר עומק תלת-ממדי */
       .card-wrap.is-flipped { 
-        transform: rotateY(180deg) scale(0.93); 
+        transform: rotateY(180deg) scale(0.94); 
       }
 
       .card-face {
@@ -58,11 +63,11 @@
         display: flex; flex-direction: column;
       }
 
-      /* חזית הכרטיס - שילוב של צבע רך, צל עמוק וטקסטורת נייר */
+      /* חזית הכרטיס */
       .card-front { 
         background-color: #fcfcfc;
         background-image: var(--card-texture);
-        padding: 2.2rem; 
+        padding: 2.4rem 2.2rem; /* הוספת מרווח פנימי אנכי */
         justify-content: space-between; 
         box-sizing: border-box; 
         position: relative;
@@ -70,12 +75,12 @@
         box-shadow: inset 0 0 30px rgba(0,0,0,0.01), 0 20px 50px rgba(45, 52, 54, 0.08);
       }
 
-      /* אלמנט הברק המוזהב הרך (נע מימין לשמאל) */
+      /* אלמנט הברק המוזהב הרך */
       .card-shine {
         position: absolute;
         top: 0;
         right: -150%; 
-        width: 70%;
+        width: 75%;
         height: 100%;
         background: linear-gradient(
           to left, 
@@ -102,45 +107,45 @@
         background: var(--mystic-back);
         transform: rotateY(180deg);
         display: flex; justify-content: center; align-items: center;
-        color: #d1d8e0; font-size: 3rem; border: 1px solid #f0f0f0;
+        color: #d1d8e0; font-size: 3.5rem; border: 1px solid #f0f0f0;
         box-shadow: 0 20px 50px rgba(45, 52, 54, 0.08);
       }
       
       .card-back::after {
-        content: ""; position: absolute; width: 82%; height: 85%;
+        content: ""; position: absolute; width: 84%; height: 87%;
         border: 1px solid var(--border-gold); border-radius: 22px;
       }
 
-      /* עיצוב הטקסטים */
-      .quote { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); line-height: 1.45; margin-top: 10px; transition: opacity 0.3s; }
-      .source { font-size: 0.9rem; color: #636e72; display: block; margin-top: 12px; font-style: italic; font-weight: 500; }
-      .insight { font-size: 1.05rem; color: #0984e3; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 20px; min-height: 55px; line-height: 1.4; }
+      /* עיצוב הטקסטים - גדלים מותאמים לכרטיס הגדול */
+      .quote { font-size: 1.65rem; font-weight: bold; color: var(--primary-color); line-height: 1.45; margin-top: 10px; transition: opacity 0.3s; }
+      .source { font-size: 0.95rem; color: #636e72; display: block; margin-top: 14px; font-style: italic; font-weight: 500; }
+      .insight { font-size: 1.1rem; color: #0984e3; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 22px; min-height: 65px; line-height: 1.45; }
       
-      /* כפתור מרכזי מעוצב ומגיב */
+      /* כפתור מרכזי */
       .btn { 
         background: var(--accent-color); color: white; border: none; padding: 16px; 
-        border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; 
+        border-radius: 50px; font-size: 1.15rem; font-weight: bold; cursor: pointer; 
         box-shadow: 0 8px 25px rgba(0,184,148,0.25); transition: transform 0.2s, box-shadow 0.2s; margin-top: 15px;
         position: relative; z-index: 6; outline: none;
       }
       .btn:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0,184,148,0.2); }
 
-      /* שורת כפתורי פעולה - סגנון Soft UI צף */
+      /* כפתורי פעולה צפים */
       .actions { display: flex; justify-content: space-around; padding-top: 5px; position: relative; z-index: 6; }
       .icon-wrapper {
-        background: #ffffff; width: 45px; height: 45px; border-radius: 50px;
+        background: #ffffff; width: 48px; height: 48px; border-radius: 50px;
         display: flex; justify-content: center; align-items: center;
         box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01);
         transition: transform 0.2s, box-shadow 0.2s;
       }
       .icon-wrapper:active { transform: scale(0.9); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-      .icon-btn { background: none; border: none; color: #b2bec3; font-size: 1.2rem; cursor: pointer; padding: 10px; transition: color 0.2s; outline: none; }
+      .icon-btn { background: none; border: none; color: #b2bec3; font-size: 1.25rem; cursor: pointer; padding: 10px; transition: color 0.2s; outline: none; }
       .icon-btn.active { color: #e17055; }
 
-      /* אנימציית טעינה (Skeleton Loader) פועמת */
+      /* Skeleton Loader */
       .skeleton-container { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px; }
       .skeleton-line { 
-        height: 18px; background: #dfe6e9; border-radius: 4px; 
+        height: 20px; background: #dfe6e9; border-radius: 4px; 
         animation: pulse 1.5s infinite ease-in-out; opacity: 0.6;
       }
       @keyframes pulse {
@@ -241,7 +246,6 @@
             currentData = getRandomQuoteFromCache();
           }
 
-          // השהיה קלה מאוד להעלמת ה-Skeleton בצורה נקייה לעין
           setTimeout(() => {
             renderQuote();
             prepareNextQuote();
@@ -275,7 +279,6 @@
             renderQuote();
             wrap.classList.remove('is-flipped');
             
-            // הפעלת הברק המלכותי ברגע שהכרטיס חוזר לחזית
             setTimeout(() => {
               triggerShineEffect();
             }, 300);
