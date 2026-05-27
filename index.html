@@ -51,37 +51,39 @@
         display: flex; flex-direction: column; box-shadow: 0 15px 45px rgba(0,0,0,0.08);
       }
 
-      /* חזית הכרטיס עם תמיכה באפקט הברקה */
+      /* חזית כרטיס משודרגת - לבן מט יוקרתי עם עומק פנימי */
       .card-front { 
-        background: white; 
+        background: #fcfcfc; 
         padding: 2.2rem; 
         justify-content: space-between; 
         box-sizing: border-box; 
         position: relative;
-        overflow: hidden; /* חותך את פינות הברק שלא יגלוש מהכרטיס */
+        overflow: hidden; 
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.015), 0 15px 45px rgba(0,0,0,0.06);
       }
 
-      /* הגדרת אלמנט הברק האלכסוני */
+      /* אלמנט הברק האלכסוני - הילת זהב רכה */
       .card-shine {
         position: absolute;
         top: 0;
-        left: -150%; /* מתחיל מחוץ למסך משמאל */
-        width: 60%;
+        left: -150%; 
+        width: 65%;
         height: 100%;
         background: linear-gradient(
           to right, 
           rgba(255, 255, 255, 0) 0%, 
-          rgba(255, 255, 255, 0.45) 50%, 
+          rgba(212, 175, 55, 0.35) 50%, 
           rgba(255, 255, 255, 0) 100%
         );
-        transform: skewX(-25deg); /* הופך את הפס לאלכסוני יפהפה */
+        transform: skewX(-25deg); 
         pointer-events: none;
         z-index: 5;
+        filter: blur(4px); /* ריכוך שולי הפס למראה טבעי */
       }
 
-      /* קלאס הפעלת הברק שירוץ מימין לשמאל */
+      /* האנימציה שרצה משמאל לימין */
       .trigger-shine {
-        animation: shineSweep 0.65s ease-in-out;
+        animation: shineSweep 0.7s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       @keyframes shineSweep {
@@ -203,10 +205,8 @@
           renderQuote();
           prepareNextQuote();
 
-          // הברקה קלה בכניסה הראשונית לאתר אחרי חצי שנייה של טעינה
-          setTimeout(() => {
-            triggerShineEffect();
-          }, 500);
+          // אפקט פתיחה חלקי בכניסה
+          setTimeout(() => { triggerShineEffect(); }, 500);
 
         } catch (error) {
           console.error("שגיאה בטעינה:", error);
@@ -235,7 +235,7 @@
             renderQuote();
             wrap.classList.remove('is-flipped');
             
-            // מפעיל את הברק בדיוק כשהקלף חוזר לחזית ומסיים להיפתח
+            // תזמון הברק בדיוק בסיום תנועת החזרה של הקלף לחזית
             setTimeout(() => {
               triggerShineEffect();
             }, 450);
@@ -250,7 +250,7 @@
         shine.classList.add('trigger-shine');
         setTimeout(() => {
           shine.classList.remove('trigger-shine');
-        }, 650);
+        }, 700);
       }
 
       function renderQuote() {
