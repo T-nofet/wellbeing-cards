@@ -6,8 +6,7 @@
     <title>קופסת הקלפים של מיכל</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-      /* UI Design by Tנופת 
-      */
+      /* UI Design by Tנופת */
       :root { 
         --primary-color: #2d3436; 
         --accent-color: #00b894; 
@@ -52,7 +51,43 @@
         display: flex; flex-direction: column; box-shadow: 0 15px 45px rgba(0,0,0,0.08);
       }
 
-      .card-front { background: white; padding: 2.2rem; justify-content: space-between; box-sizing: border-box; }
+      /* חזית הכרטיס עם תמיכה באפקט הברקה */
+      .card-front { 
+        background: white; 
+        padding: 2.2rem; 
+        justify-content: space-between; 
+        box-sizing: border-box; 
+        position: relative;
+        overflow: hidden; /* חותך את פינות הברק שלא יגלוש מהכרטיס */
+      }
+
+      /* הגדרת אלמנט הברק האלכסוני */
+      .card-shine {
+        position: absolute;
+        top: 0;
+        left: -150%; /* מתחיל מחוץ למסך משמאל */
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(
+          to right, 
+          rgba(255, 255, 255, 0) 0%, 
+          rgba(255, 255, 255, 0.45) 50%, 
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: skewX(-25deg); /* הופך את הפס לאלכסוני יפהפה */
+        pointer-events: none;
+        z-index: 5;
+      }
+
+      /* קלאס הפעלת הברק שירוץ מימין לשמאל */
+      .trigger-shine {
+        animation: shineSweep 0.65s ease-in-out;
+      }
+
+      @keyframes shineSweep {
+        0% { left: -150%; }
+        100% { left: 150%; }
+      }
 
       .card-back {
         background: var(--mystic-back);
@@ -74,10 +109,11 @@
         background: var(--accent-color); color: white; border: none; padding: 16px; 
         border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; 
         box-shadow: 0 6px 20px rgba(0,184,148,0.2); transition: 0.2s; margin-top: 20px;
+        position: relative; z-index: 6;
       }
       .btn:active { transform: scale(0.96); }
 
-      .actions { display: flex; justify-content: space-around; border-top: 1px solid #fbfbfb; padding-top: 15px; }
+      .actions { display: flex; justify-content: space-around; border-top: 1px solid #fbfbfb; padding-top: 15px; position: relative; z-index: 6; }
       .icon-btn { background: none; border: none; color: #ced6e0; font-size: 1.4rem; cursor: pointer; padding: 10px; transition: 0.2s; outline: none; }
       .icon-btn.active { color: #e17055; }
 
@@ -101,6 +137,8 @@
         </div>
         
         <div class="card-face card-front">
+          <div class="card-shine" id="cardShine"></div>
+
           <div>
             <div id="quoteText" class="quote">מתחבר לקופסה...</div>
             <span id="sourceText" class="source"></span>
@@ -135,7 +173,6 @@
       let nextData = null;
       const colors = ['#f0f4f8', '#e8f4f1', '#f3eef5', '#fcf9e8', '#f1f5f2', '#f2f6fc'];
 
-      // טעינה חלקה מה-JSON הסטטי ששוכב באותו ריפו
       window.onload = async () => {
         try {
           const response = await fetch(LOCAL_DATA_URL);
@@ -153,7 +190,6 @@
             return;
           }
 
-          // פירוק ה-URL בגיטהאב כדי לבדוק אם שלחו לנו קישור ישיר לקלף מסוים
           const urlParams = new URLSearchParams(window.location.search);
           const startId = parseInt(urlParams.get('id'));
 
@@ -166,6 +202,11 @@
 
           renderQuote();
           prepareNextQuote();
+
+          // הברקה קלה בכניסה הראשונית לאתר אחרי חצי שנייה של טעינה
+          setTimeout(() => {
+            triggerShineEffect();
+          }, 500);
 
         } catch (error) {
           console.error("שגיאה בטעינה:", error);
@@ -193,8 +234,22 @@
             currentData = nextData;
             renderQuote();
             wrap.classList.remove('is-flipped');
-            prepareNextQuote(); // הגרלת הקלף הבא מיידית בזיכרון, ללא קריאות שרת
+            
+            // מפעיל את הברק בדיוק כשהקלף חוזר לחזית ומסיים להיפתח
+            setTimeout(() => {
+              triggerShineEffect();
+            }, 450);
+
+            prepareNextQuote();
           }
+        }, 650);
+      }
+
+      function triggerShineEffect() {
+        const shine = document.getElementById('cardShine');
+        shine.classList.add('trigger-shine');
+        setTimeout(() => {
+          shine.classList.remove('trigger-shine');
         }, 650);
       }
 
@@ -206,7 +261,6 @@
         updateHeartIcon();
       }
 
-      // שיתוף חכם אמיתי שמבוסס על כתובת ה-GitHub Pages שלך!
       function shareSmartLink() {
         if (!currentData || !currentData.id) return;
         
@@ -248,25 +302,41 @@
 
       function toggleFavModal() {
         const modal = document.getElementById('favModal');
-        const list = document.getElementById('favList');
-        if (modal.style.display === 'flex') { modal.style.display = 'none'; } 
-        else {
-          let favs = JSON.parse(localStorage.getItem('myFavs') || '[]');
-          list.innerHTML = favs.length ? favs.map((f, i) => `
-            <div class="modal-item">
-              <span style="flex:1; margin-left:10px; text-align:right;">${f.quote.substring(0, 45)}...</span>
-              <button class="icon-btn active" onclick="removeFav(${i})"><i class="fa-solid fa-trash-can"></i></button>
-            </div>
-          `).join('') : '<p style="text-align:center">אין משפטים שמורים.</p>';
+        if (modal.style.display === 'flex') { 
+          modal.style.display = 'none'; 
+        } else {
+          renderFavList();
           modal.style.display = 'flex';
         }
       }
 
-      window.removeFav = (idx) => {
+      function renderFavList() {
+        const list = document.getElementById('favList');
+        let favs = JSON.parse(localStorage.getItem('myFavs') || '[]');
+        
+        list.innerHTML = favs.length ? favs.map((f, i) => `
+          <div class="modal-item" style="cursor: pointer;" onclick="selectFavCard(${i}, event)">
+            <span style="flex:1; margin-left:10px; text-align:right; font-weight:500;">${f.quote.substring(0, 45)}...</span>
+            <button class="icon-btn active" style="z-index:12;" onclick="removeFav(${i}, event)"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        `).join('') : '<p style="text-align:center">אין משפטים שמורים.</p>';
+      }
+
+      window.selectFavCard = (idx, event) => {
+        let favs = JSON.parse(localStorage.getItem('myFavs') || '[]');
+        currentData = favs[idx];
+        renderQuote();
+        document.getElementById('favModal').style.display = 'none';
+        prepareNextQuote();
+        setTimeout(() => { triggerShineEffect(); }, 200);
+      };
+
+      window.removeFav = (idx, event) => {
+        event.stopPropagation(); 
         let favs = JSON.parse(localStorage.getItem('myFavs') || '[]');
         favs.splice(idx, 1);
         localStorage.setItem('myFavs', JSON.stringify(favs));
-        toggleFavModal(); toggleFavModal(); 
+        renderFavList(); 
         updateHeartIcon();
       };
     </script>
