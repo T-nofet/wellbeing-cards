@@ -1,18 +1,274 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
+<html dir="rtl" lang="he">
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>קופסת הקלפים</title>
+    <title>קופסת הקלפים של מיכל</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background-color: #f0f2f5; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+      /* UI Design by Tנופת 
+      */
+      :root { 
+        --primary-color: #2d3436; 
+        --accent-color: #00b894; 
+        --bg-color: #f0f4f8; 
+        --mystic-back: linear-gradient(135deg, #ffffff, #f1f2f6);
+        --border-gold: rgba(212, 175, 55, 0.25);
+      }
+      
+      body { 
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+        display: flex; flex-direction: column; justify-content: center; align-items: center; 
+        height: 100vh; margin: 0; background-color: var(--bg-color); 
+        transition: background-color 1.2s ease; overflow: hidden; position: relative;
+      }
+
+      .app-header {
+        position: absolute; top: 30px; left: 0; right: 0;
+        font-size: 2.2rem; font-weight: 900; color: rgba(45, 52, 54, 0.05); 
+        text-align: center; user-select: none; pointer-events: none; z-index: 0;
+      }
+
+      .signature {
+        position: absolute; bottom: 15px; right: 20px;
+        font-size: 0.75rem; color: rgba(45, 52, 54, 0.15);
+        letter-spacing: 0.5px; user-select: none; z-index: 0;
+        font-weight: 400; direction: rtl;
+      }
+
+      .scene { width: 85%; max-width: 360px; height: 460px; perspective: 1200px; z-index: 1; }
+      
+      .card-wrap {
+        width: 100%; height: 100%; position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .card-wrap.is-flipped { transform: rotateY(180deg); }
+
+      .card-face {
+        position: absolute; width: 100%; height: 100%;
+        backface-visibility: hidden; border-radius: 30px;
+        display: flex; flex-direction: column; box-shadow: 0 15px 45px rgba(0,0,0,0.08);
+      }
+
+      .card-front { background: white; padding: 2.2rem; justify-content: space-between; box-sizing: border-box; }
+
+      .card-back {
+        background: var(--mystic-back);
+        transform: rotateY(180deg);
+        display: flex; justify-content: center; align-items: center;
+        color: #d1d8e0; font-size: 3rem; border: 1px solid #f0f0f0;
+      }
+      
+      .card-back::after {
+        content: ""; position: absolute; width: 82%; height: 85%;
+        border: 1px solid var(--border-gold); border-radius: 20px;
+      }
+
+      .quote { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); line-height: 1.4; margin-top: 10px; }
+      .source { font-size: 0.9rem; color: #636e72; display: block; margin-top: 12px; font-style: italic; }
+      .insight { font-size: 1.1rem; color: #0984e3; border-top: 1px solid #f8f8f8; padding-top: 20px; min-height: 60px; }
+      
+      .btn { 
+        background: var(--accent-color); color: white; border: none; padding: 16px; 
+        border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; 
+        box-shadow: 0 6px 20px rgba(0,184,148,0.2); transition: 0.2s; margin-top: 20px;
+      }
+      .btn:active { transform: scale(0.96); }
+
+      .actions { display: flex; justify-content: space-around; border-top: 1px solid #fbfbfb; padding-top: 15px; }
+      .icon-btn { background: none; border: none; color: #ced6e0; font-size: 1.4rem; cursor: pointer; padding: 10px; transition: 0.2s; outline: none; }
+      .icon-btn.active { color: #e17055; }
+
+      #favModal {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 10; backdrop-filter: blur(4px);
+      }
+      .modal-content { background: white; width: 85%; max-width: 400px; border-radius: 30px; padding: 25px; max-height: 70vh; overflow-y: auto; }
+      .modal-item { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
     </style>
-</head>
-<body>
-    <iframe src="https://script.google.com/macros/s/AKfycbyeZTW8tPKtrj4iu9TWIvVZL5P3SgqihLlibrO_AueDSLKPi-_sz5BbsZcafbCbU-Q1/exec"></iframe>
-</body>
+  </head>
+  <body>
+
+    <div class="signature">Tנופת</div>
+    <div class="app-header" id="headerTitle">קופסת הקלפים של מיכל</div>
+
+    <div class="scene">
+      <div class="card-wrap" id="cardWrap">
+        <div class="card-face card-back">
+          <i class="fa-solid fa-feather-pointed"></i>
+        </div>
+        
+        <div class="card-face card-front">
+          <div>
+            <div id="quoteText" class="quote">מתחבר לקופסה...</div>
+            <span id="sourceText" class="source"></span>
+          </div>
+          
+          <div id="insightText" class="insight"></div>
+          
+          <button class="btn" onclick="getNextMysticQuote()">משפט נוסף</button>
+          
+          <div class="actions">
+            <button class="icon-btn" onclick="toggleFavModal()"><i class="fa-solid fa-bookmark"></i></button>
+            <button class="icon-btn" onclick="shareSmartLink()"><i class="fa-solid fa-share-nodes"></i></button>
+            <button class="icon-btn" id="favBtn" onclick="toggleFavorite()"><i class="fa-solid fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="favModal" onclick="if(event.target == this) toggleFavModal()">
+      <div class="modal-content">
+        <h3 style="text-align:center; margin-top:0;">השמורים שלי</h3>
+        <div id="favList"></div>
+      </div>
+    </div>
+
+    <script>
+      console.log("%c Tנופת %c Digital Signature Verified", "color: #00b894; font-weight: bold; font-size: 14px;", "color: gray;");
+
+      const LOCAL_DATA_URL = "data.json";
+      let allQuotes = [];
+      let currentData = null;
+      let nextData = null;
+      const colors = ['#f0f4f8', '#e8f4f1', '#f3eef5', '#fcf9e8', '#f1f5f2', '#f2f6fc'];
+
+      // טעינה חלקה מה-JSON הסטטי ששוכב באותו ריפו
+      window.onload = async () => {
+        try {
+          const response = await fetch(LOCAL_DATA_URL);
+          const data = await response.json();
+          
+          if(data.settings && data.settings.mainTitle) {
+            document.getElementById('headerTitle').innerText = data.settings.mainTitle;
+            document.title = data.settings.mainTitle;
+          }
+          
+          allQuotes = data.quotes || [];
+
+          if (allQuotes.length === 0) {
+            document.getElementById('quoteText').innerText = "אין נתונים בקופסה.";
+            return;
+          }
+
+          // פירוק ה-URL בגיטהאב כדי לבדוק אם שלחו לנו קישור ישיר לקלף מסוים
+          const urlParams = new URLSearchParams(window.location.search);
+          const startId = parseInt(urlParams.get('id'));
+
+          if (startId) {
+            const specificQuote = allQuotes.find(q => q.id === startId);
+            currentData = specificQuote || getRandomQuoteFromCache();
+          } else {
+            currentData = getRandomQuoteFromCache();
+          }
+
+          renderQuote();
+          prepareNextQuote();
+
+        } catch (error) {
+          console.error("שגיאה בטעינה:", error);
+          document.getElementById('quoteText').innerText = "שגיאה בחיבור למחסן הנתונים.";
+        }
+      };
+
+      function getRandomQuoteFromCache() {
+        if (!allQuotes.length) return null;
+        const randomIndex = Math.floor(Math.random() * allQuotes.length);
+        return allQuotes[randomIndex];
+      }
+
+      function prepareNextQuote() {
+        nextData = getRandomQuoteFromCache();
+      }
+
+      function getNextMysticQuote() {
+        const wrap = document.getElementById('cardWrap');
+        wrap.classList.add('is-flipped');
+        document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        setTimeout(() => {
+          if (nextData) {
+            currentData = nextData;
+            renderQuote();
+            wrap.classList.remove('is-flipped');
+            prepareNextQuote(); // הגרלת הקלף הבא מיידית בזיכרון, ללא קריאות שרת
+          }
+        }, 650);
+      }
+
+      function renderQuote() {
+        if (!currentData) return;
+        document.getElementById('quoteText').innerText = currentData.quote;
+        document.getElementById('sourceText').innerText = currentData.source ? "- " + currentData.source : "";
+        document.getElementById('insightText').innerText = currentData.insight || "";
+        updateHeartIcon();
+      }
+
+      // שיתוף חכם אמיתי שמבוסס על כתובת ה-GitHub Pages שלך!
+      function shareSmartLink() {
+        if (!currentData || !currentData.id) return;
+        
+        const baseUrl = window.location.href.split('?')[0];
+        const shareUrl = baseUrl + "?id=" + currentData.id;
+        const text = `משהו שחשבתי עליו בשבילך:\n"${currentData.quote}"\n\nלקריאה המלאה:\n${shareUrl}`;
+        
+        if (navigator.share) {
+          navigator.share({ text: text }).catch(() => copyToClipboard(shareUrl));
+        } else {
+          copyToClipboard(shareUrl);
+        }
+      }
+
+      function copyToClipboard(url) {
+        const el = document.createElement('textarea');
+        el.value = url; document.body.appendChild(el);
+        el.select(); document.execCommand('copy');
+        document.body.removeChild(el);
+        alert('הקישור הועתק!');
+      }
+
+      function toggleFavorite() {
+        if (!currentData) return;
+        let favs = JSON.parse(localStorage.getItem('myFavs') || '[]');
+        const idx = favs.findIndex(f => f.quote === currentData.quote);
+        if (idx > -1) favs.splice(idx, 1);
+        else favs.push(currentData);
+        localStorage.setItem('myFavs', JSON.stringify(favs));
+        updateHeartIcon();
+      }
+
+      function updateHeartIcon() {
+        if (!currentData) return;
+        let favs = JSON.parse(localStorage.getItem('myFavs') || '[]');
+        const isFav = favs.some(f => f.quote === currentData.quote);
+        document.getElementById('favBtn').classList.toggle('active', isFav);
+      }
+
+      function toggleFavModal() {
+        const modal = document.getElementById('favModal');
+        const list = document.getElementById('favList');
+        if (modal.style.display === 'flex') { modal.style.display = 'none'; } 
+        else {
+          let favs = JSON.parse(localStorage.getItem('myFavs') || '[]');
+          list.innerHTML = favs.length ? favs.map((f, i) => `
+            <div class="modal-item">
+              <span style="flex:1; margin-left:10px; text-align:right;">${f.quote.substring(0, 45)}...</span>
+              <button class="icon-btn active" onclick="removeFav(${i})"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          `).join('') : '<p style="text-align:center">אין משפטים שמורים.</p>';
+          modal.style.display = 'flex';
+        }
+      }
+
+      window.removeFav = (idx) => {
+        let favs = JSON.parse(localStorage.getItem('myFavs') || '[]');
+        favs.splice(idx, 1);
+        localStorage.setItem('myFavs', JSON.stringify(favs));
+        toggleFavModal(); toggleFavModal(); 
+        updateHeartIcon();
+      };
+    </script>
+  </body>
 </html>
